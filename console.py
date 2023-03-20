@@ -126,6 +126,9 @@ class HBNBCommand(cmd.Cmd):
                 value = item[1]
                 if value.startswith("\""):
                     value = item[1].split("\"")[1]
+                    if "_" in value:
+                        value = value.replace("_", " ")
+                        print(f"printing {value}")
                 dict_object[key] = value
 
         if not args:
