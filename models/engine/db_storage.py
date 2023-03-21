@@ -42,7 +42,8 @@ class DBStorage:
         all_models = {
                 'State': State,
                 'City': City,
-                'User': User
+                'User': User,
+                'Place': Place
                 }
 
         if cls:
