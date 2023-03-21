@@ -2,6 +2,9 @@
 """ Console Module """
 import cmd
 import sys
+import os
+import uuid
+from datetime import datetime
 import shlex
 from models.base_model import BaseModel
 from models.__init__ import storage
@@ -128,7 +131,6 @@ class HBNBCommand(cmd.Cmd):
                     value = item[1].split("\"")[1]
                     if "_" in value:
                         value = value.replace("_", " ")
-                        print(f"printing {value}")
                 dict_object[key] = value
 
         if not args:
@@ -137,13 +139,24 @@ class HBNBCommand(cmd.Cmd):
         elif args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args[0]]()
-        if dict_object:
-            for key, value in dict_object.items():
-                setattr(new_instance, key, value)
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+            class_name = args[0]
+            if not hasattr(dict_object, 'id'):
+                dict_object['id'] = str(uuid.uuid4())
+            if not hasattr(dict_object, 'created_at'):
+                dict_object['created_at'] = datetime.now().isoformat()
+            if not hasattr(dict_object, 'updated_at'):
+                dict_object['updated_at'] = datetime.now().isoformat()
+            new_instance = HBNBCommand.classes[class_name](**dict_object)
+            new_instance.save()
+            print(new_instance.id)
+        else:
+            if dict_object:
+                for key, value in dict_object.items():
+                    setattr(new_instance, key, value)
+            storage.save()
+            print(new_instance.id)
+            storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -225,7 +238,7 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
