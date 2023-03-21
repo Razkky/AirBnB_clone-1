@@ -141,6 +141,7 @@ class HBNBCommand(cmd.Cmd):
             return
         if os.getenv('HBNB_TYPE_STORAGE') == 'db':
             class_name = args[0]
+            print(class_name)
             if not hasattr(dict_object, 'id'):
                 dict_object['id'] = str(uuid.uuid4())
             if not hasattr(dict_object, 'created_at'):
