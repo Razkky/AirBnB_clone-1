@@ -1,11 +1,29 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 import os
 from sqlalchemy.orm import relationship
 
 
+place_amenity = Table(
+        'place_amenity',
+        Base.metadata,
+        Column(
+            'place_id',
+            String(60),
+            ForeignKey('places.id'),
+            nullable=False,
+            primary_key=True
+            ),
+        Column(
+            'amenity_id',
+            String(60),
+            ForeignKey('amenities.id'),
+            nullable=False,
+            primary_key=True
+            )
+        )
 class Place(BaseModel, Base):
     """ A place to stay """
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
@@ -18,12 +36,18 @@ class Place(BaseModel, Base):
         number_bathrooms = Column(Integer, default=0, nullable=False)
         max_guest = Column(Integer, default=0, nullable=False)
         price_by_night = Column(Integer, default=0, nullable=False)
-        latitude = Column(Float, nullable=False)
-        longitude = Column(Float, nullable=False)
+        latitude = Column(Float, nullable=True)
+        longitude = Column(Float, nullable=True)
         reviews = relationship(
                 'Review',
                 cascade="all, delete, delete-orphan",
                 backref='place'
+                )
+        amenities = relationship(
+                'Amenity',
+                secondary=place_amenity,
+                viewonly=False,
+                backref='place_amenities'
                 )
     else:
         city_id = ""
@@ -47,3 +71,20 @@ class Place(BaseModel, Base):
                 if value.place_id == self.id:
                     place_review.append(value)
             return place_review
+
+        @property
+        def amenities(self):
+            """Returns the amenities of this Place"""
+            from models import storage
+            place_amenity = []
+            for key, value in storage.all(Amenity).items():
+                if value.place_id in self.amenity_ids:
+                    place_amenity.append(value)
+            return place_amenity
+
+        @amenities.setter
+        def amenities(self, value):
+            """Adds amenity id to list of amenity ids"""
+            if type(value) is Amenity:
+                if value.id not in self.amenity_ids:
+                    self.amenity_ids.append(value)
