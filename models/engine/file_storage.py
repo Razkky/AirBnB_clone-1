@@ -14,8 +14,8 @@ class FileStorage:
             cls_objects = {}
             for key, value in FileStorage.__objects.items():
                 new = value.to_dict()
-                state = new["__class__"]
-                if cls.__name__ == state:
+                class_name = new["__class__"]
+                if cls.__name__ == class_name:
                     cls_objects[key] = value
             return cls_objects
 
@@ -54,7 +54,7 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                    self.all()[key] = classes[val['__class__']](**val)
+                    FileStorage.__objects[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
 

@@ -6,8 +6,8 @@ import os
 import uuid
 from datetime import datetime
 import shlex
-from models.base_model import BaseModel
 from models.__init__ import storage
+from models.base_model import BaseModel
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -140,6 +140,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
         if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+            print("db storage in use")
             class_name = args[0]
             print(class_name)
             if not hasattr(dict_object, 'id'):
@@ -152,10 +153,12 @@ class HBNBCommand(cmd.Cmd):
             new_instance.save()
             print(new_instance.id)
         else:
+            class_name = args[0]
+            new_instance = HBNBCommand.classes[class_name]()
             if dict_object:
                 for key, value in dict_object.items():
                     setattr(new_instance, key, value)
-            storage.save()
+            new_instance.save()
             print(new_instance.id)
             storage.save()
 
