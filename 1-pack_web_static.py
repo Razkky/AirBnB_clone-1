@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 
 
+@runs_once
 def do_pack():
     """Create a .tgz archive"""
     if os.path.isdir('versions'):
