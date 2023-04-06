@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Generates a .tgz archive from the contents of the web_static
     folder of the AirBnB Clone repo using do_pack function
-    """
+"""
 from fabric.api import local, runs_once, put, run, env
 from datetime import datetime
 import os
@@ -56,6 +56,7 @@ def do_deploy(archive_path):
             run('sudo rm -rf /data/web_static/current')
             run('ln -s {} /data/web_static/current'.format(
                 path))
+            print("New version deployed!")
         except Exception as err:
             return False
     return True
