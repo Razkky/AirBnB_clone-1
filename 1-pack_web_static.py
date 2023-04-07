@@ -9,7 +9,8 @@ import os
 
 @runs_once
 def do_pack():
-    """Create a .tgz archive"""
+    """Create a .tgz archive
+        ready to be deployed"""
     if os.path.isdir('versions'):
         pass
     else:
