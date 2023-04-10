@@ -13,6 +13,27 @@ HTML_HOME_PAGE="<!DOCTYPE html>
 		<h1>My first web deployment</h1>
 	</body>
 </html>"
+SERVER="server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+
+	server_name _;
+	index index.html;
+	add_header X-Served-By \$hostanme;
+
+	location / {
+		root /var/www/html/;
+		try_files \$uri \$uri/ =404;
+	}
+	location /hbnb_static/ {
+		alias /data/web_static/current/;
+		try_files \$uri \$uri/ =404;
+	}
+
+	rewrite ^/redirect_me https://netnaija.com;
+	error_page 404 /error_404.html;
+}"
+	
 #create /data/ folder if not exist
 mkdir /data/
 #create /data/web_static/ if not exist
@@ -27,8 +48,9 @@ mkdir -p /data/web_static/releases/test/
 echo "$HTML_HOME_PAGE" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 #Create a symbolic link /data/web_static/current linked to the /data/web_static/releases/test/ folder.
 [ -d /data/web_static/current ] && rm -rf /data/web_static/current
-ln -s /data/web_static/releases/test/ /data/web_static/current
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 #Give ownership of /data/ folder to the ubuntu User
 chown -R ubuntu:ubuntu /data
-sed -i '/# pass PHP scripts to FastCGI server/a location /hbnb_static/ { alias /data/web_static/current/; autoindex off; }' /etc/nginx/sites-available/default
+echo "$SERVER" > /etc/nginx/sites-available/default;
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 service nginx restart
