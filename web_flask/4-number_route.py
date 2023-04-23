@@ -34,7 +34,7 @@ def python(text):
 @app.route("/number/<int:n>")
 def number(n):
     """Display value of n(int)"""
-    return f"{n} is a number"
+    return "{} is a number".format(n)
 
 
 if __name__ == "__main__":
