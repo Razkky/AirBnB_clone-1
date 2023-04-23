@@ -25,10 +25,10 @@ def c(text):
 
 
 @app.route("/python/<text>")
-@app.route("/python", defaults={'text': "cool"})
+@app.route("/python", defaults={'text': "is cool"})
 def python(text):
     """Display python is followed by text"""
-    return "Python is {}".format(text.replace("_", " "))
+    return "Python {}".format(text.replace("_", " "))
 
 
 if __name__ == "__main__":
