@@ -28,8 +28,6 @@ def c(text):
 @app.route("/python", defaults={'text': "cool"})
 def python(text):
     """Display python is followed by text"""
-    if not text:
-        text = "Cool"
     return "Python is {}".format(text.replace("_", " "))
 
 
