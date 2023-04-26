@@ -28,10 +28,10 @@ def do_pack():
                 time.minute,
                 time.second
                 )
-        print(f"Packing web_static to {file}")
-        local(f"tar -czvf {file} web_static/")
+        print("Packing web_static to {}".format(file))
+        local("tar -czvf {} web_static/".format(file))
         file_size = os.getsize(file)
-        print(f"web_static packed: {file} -> {file_size} Bytes")
+        print("web_static packed: {} -> {} Bytes".format(file, file_size))
     except Exception:
         file = None
     return file
@@ -41,7 +41,7 @@ def do_deploy(archive_path):
     """Deploy webstatic to remote server"""
     base_name = os.path.basename(archive_path)
     name_file = base_name.replace(".tgz", "")
-    path = f'/data/web_static/releases/{name_file}'
+    path = '/data/web_static/releases/{}'.format(name_file)
     if not os.path.exists(archive_path):
         return False
     else:
@@ -49,10 +49,10 @@ def do_deploy(archive_path):
             put(archive_path, '/tmp/{}'.format(base_name))
             run('mkdir -p /data/web_static/releases/{}'.format(
                 name_file))
-            run(f"sudo tar -xzf /tmp/{base_name} -C {path}")
-            run(f"rm -rf /tmp/{base_name}")
-            run(f"sudo mv {path}/web_static/* {path}")
-            run(f"sudo rm -rf {path}/web_static")
+            run("sudo tar -xzf /tmp/{} -C {}".format(base_name, path))
+            run("rm -rf /tmp/{}".format(base_name))
+            run("sudo mv {}/web_static/* {}".format(path, path))
+            run("sudo rm -rf {}/web_static".format(path))
             run('sudo rm -rf /data/web_static/current')
             run('ln -s {} /data/web_static/current'.format(
                 path))
@@ -60,6 +60,7 @@ def do_deploy(archive_path):
         except Exception as err:
             return False
     return True
+
 
 def deploy():
     """Archive a path and deploy it on remote server"""
