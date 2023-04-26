@@ -30,10 +30,12 @@ def do_pack():
                 )
         print("Packing web_static to {}".format(file))
         local("tar -czvf {} web_static/".format(file))
-        file_size = os.getsize(file)
+        file_size = os.path.getsize(file)
         print("web_static packed: {} -> {} Bytes".format(file, file_size))
-    except Exception:
+    except Exception as err:
+        print(err)
         file = None
+    print(file)
     return file
 
 
@@ -47,14 +49,14 @@ def do_deploy(archive_path):
     else:
         try:
             put(archive_path, '/tmp/{}'.format(base_name))
-            run('mkdir -p /data/web_static/releases/{}'.format(
+            run('sudo mkdir -p /data/web_static/releases/{}'.format(
                 name_file))
             run("sudo tar -xzf /tmp/{} -C {}".format(base_name, path))
-            run("rm -rf /tmp/{}".format(base_name))
+            run("sudo rm -rf /tmp/{}".format(base_name))
             run("sudo mv {}/web_static/* {}".format(path, path))
             run("sudo rm -rf {}/web_static".format(path))
             run('sudo rm -rf /data/web_static/current')
-            run('ln -s {} /data/web_static/current'.format(
+            run('sudo ln -s {} /data/web_static/current'.format(
                 path))
             print("New version deployed!")
         except Exception as err:
@@ -66,6 +68,8 @@ def deploy():
     """Archive a path and deploy it on remote server"""
     archive = do_pack()
     if archive:
+        print(f"Printing{archive}")
         return do_deploy(archive)
     else:
+        print("No archive")
         return False
