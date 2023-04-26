@@ -25,10 +25,10 @@ def do_pack():
                 time.minute,
                 time.second
                 )
-        print(f"Packing web_static to {file}")
-        local(f"tar -czvf {file} web_static/")
+        print("Packing web_static to {}".format(file))
+        local("tar -czvf {} web_static/".format(file))
         file_size = os.stat(file).st_size
-        print(f"web_static packed: {file} -> {file_size} Bytes")
+        print("web_static packed: {} -> {} Bytes".format(file, file_size))
     except Exception:
         file = None
     return file
