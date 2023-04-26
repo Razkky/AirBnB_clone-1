@@ -35,7 +35,6 @@ def do_pack():
     except Exception as err:
         print(err)
         file = None
-    print(file)
     return file
 
 
@@ -68,8 +67,6 @@ def deploy():
     """Archive a path and deploy it on remote server"""
     archive = do_pack()
     if archive:
-        print(f"Printing{archive}")
         return do_deploy(archive)
     else:
-        print("No archive")
         return False
